@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ATMSachVision</string>
+    <!--search-->
+    <string name="text_title_price">Giá in trên sách:</string>
+    <string name="text_dialog_wait">Đang tìm kiếm thông tin sách</string>
+    <string name="progress_wait">Vui lòng đợi...</string>
+
+</resources>
