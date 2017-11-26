@@ -1,4 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+realm {
+    syncEnabled = true;
+}
 
 android {
     compileSdkVersion 25
@@ -17,6 +21,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
+    }
 }
 
 dependencies {
@@ -27,6 +34,7 @@ dependencies {
 
 
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
     compile 'com.jakewharton:butterknife:8.8.0'
     compile 'com.frosquivel:magicalcamera:5.0.5'

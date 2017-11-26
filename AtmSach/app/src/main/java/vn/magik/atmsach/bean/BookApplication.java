@@ -5,6 +5,9 @@ import android.content.Context;
 
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import vn.magik.atmsach.realm.Module;
 import vn.magik.atmsach.retrofit.DataFactory;
 import vn.magik.atmsach.retrofit.DataServices;
 
@@ -15,6 +18,23 @@ import vn.magik.atmsach.retrofit.DataServices;
 public class BookApplication extends Application {
     private DataServices dataServices;
     private Scheduler scheduler;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        //khởi tạo Realm
+        Realm.init(this);
+        //tạo 1 config mới cho realm
+        // lưu ở /data/user/0/vn.magik.book/files
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .modules(new Module())
+                .deleteRealmIfMigrationNeeded()
+                .name("bookrealm.realm").build();
+        //đưa RealmConfiguation tùy chỉnh thành RealmConfiguation mặc định
+        Realm.setDefaultConfiguration(config);
+
+    }
 
     private static BookApplication get(Context context) {
         return (BookApplication) context.getApplicationContext();

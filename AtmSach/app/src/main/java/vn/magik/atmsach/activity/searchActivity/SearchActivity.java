@@ -20,6 +20,8 @@ import vn.magik.atmsach.R;
 import vn.magik.atmsach.activity.resultSearchActivity.ResultSearchActivity;
 import vn.magik.atmsach.bean.AppConstants;
 import vn.magik.atmsach.model.BookTitle;
+import vn.magik.atmsach.model.ScanObject;
+import vn.magik.atmsach.realm.scanObject.ScanObjectRepository;
 import vn.magik.atmsach.util.BitmapTransform;
 import vn.magik.atmsach.util.Utils;
 
@@ -28,11 +30,13 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
     private static final int MAX_WIDTH = 300;
     private static final int MAX_HEIGHT = 300;
     private static final String EXTRA_SEARCH = "extra_search_activity";
+    private static final String EXTRA_SCAN_OBJECT = "extra_search_scan_object";
     private static final int REQUEST_CODE_FOR_SEARCH_RESULT = 1;
 
     private SearchPresenter mPresenter;
     private ProgressDialog progressDialog;
     private String sku = "";
+    private ScanObject scanObject = new ScanObject();
 
     @BindView(R.id.image_search_book)
     ImageView imageBook;
@@ -52,6 +56,7 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
         sku = (String) getIntent().getStringExtra(EXTRA_SEARCH);
+        scanObject = (ScanObject) getIntent().getSerializableExtra(EXTRA_SCAN_OBJECT);
         mPresenter = new SearchPresenter(this, this);
         searchInfoBook();
 
@@ -66,9 +71,10 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
         mPresenter.getModel().searchInfo(sku);
     }
 
-    public static Intent launchActivity(Context context, String sku) {
+    public static Intent launchActivity(Context context, String sku, ScanObject scanObject) {
         Intent intent = new Intent(context, SearchActivity.class);
         intent.putExtra(EXTRA_SEARCH, sku);
+        intent.putExtra(EXTRA_SCAN_OBJECT, scanObject);
         return intent;
     }
 
@@ -111,11 +117,13 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
         if (errorCode == 0) {
             Toast.makeText(this, "Vui lòng kết nối mạng internet", Toast.LENGTH_SHORT).show();
         } else if (errorCode == 1) {
-            Toast.makeText(this, "Xảy ra lỗi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Không xác nhận được mã sku", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void updateView(BookTitle bookTitle) {
+        scanObject.setNameBook(bookTitle.getName());
+        ScanObjectRepository.getIns().saveScanDraft(scanObject);
         int size = (int) Math.ceil(Math.sqrt(MAX_WIDTH * MAX_HEIGHT));
         linearLayoutContent.setVisibility(View.VISIBLE);
         Picasso.with(imageBook.getContext())
