@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,6 +47,10 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
     TextView textAuthorBook;
     @BindView(R.id.text_search_price_book)
     TextView textPriceBook;
+    @BindView(R.id.text_search_describe)
+    TextView textDescription;
+    @BindView(R.id.text_search_info)
+    TextView textInfo;
     @BindView(R.id.linear_content)
     LinearLayout linearLayoutContent;
 
@@ -135,5 +140,7 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
         textNameBook.setText(bookTitle.getName().toString());
         textAuthorBook.setText(bookTitle.getAuthor().toString());
         textPriceBook.setText(Utils.formatPrice(bookTitle.getListPrice()));
+        textDescription.setText(bookTitle.getDescription());
+        textInfo.setText((Html.fromHtml(bookTitle.getInfo())));
     }
 }

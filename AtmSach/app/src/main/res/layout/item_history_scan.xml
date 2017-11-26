@@ -43,7 +43,7 @@
                 android:id="@+id/text_history_scan_percent_damage"
                 android:layout_width="match_parent"
                 android:padding="2dp"
-                android:text="Mức độ hư hại: chưa xác định"
+                android:text="Độ mới: 95%"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>

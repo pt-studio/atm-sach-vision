@@ -27,6 +27,12 @@ public class BookTitle implements Serializable {
     private String isbn;
     @SerializedName("logo")
     private String logo;
+    @SerializedName("back_image")
+    private String backImage;
+    @SerializedName("left_image")
+    private String leftImage;
+    @SerializedName("right_image")
+    private String rightImage;
     @SerializedName("created_at")
     private String createdAt;
     @SerializedName("modify_at")
@@ -37,6 +43,10 @@ public class BookTitle implements Serializable {
     private float star;
     @SerializedName("type")
     private String type;
+    @SerializedName("description")
+    private String description ;
+    @SerializedName("info")
+    private String info;
 
     public BookTitle() {
     }
@@ -143,6 +153,46 @@ public class BookTitle implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getBackImage() {
+        return backImage;
+    }
+
+    public void setBackImage(String backImage) {
+        this.backImage = backImage;
+    }
+
+    public String getLeftImage() {
+        return leftImage;
+    }
+
+    public void setLeftImage(String leftImage) {
+        this.leftImage = leftImage;
+    }
+
+    public String getRightImage() {
+        return rightImage;
+    }
+
+    public void setRightImage(String rightImage) {
+        this.rightImage = rightImage;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public static class BookTitleResponse implements Serializable {

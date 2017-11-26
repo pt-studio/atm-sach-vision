@@ -37,6 +37,7 @@ import vn.magik.atmsach.bean.AppConstants;
 import vn.magik.atmsach.model.ScanObject;
 import vn.magik.atmsach.realm.scanObject.ScanObjectRepository;
 import vn.magik.atmsach.util.BitmapTransform;
+import vn.magik.atmsach.util.CompareImage;
 
 import static vn.magik.atmsach.bean.AppConstants.MAX_HEIGHT;
 import static vn.magik.atmsach.bean.AppConstants.MAX_WIDTH;
@@ -84,8 +85,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         permisionRequest();
-    }
 
+
+
+    }
     @OnClick(R.id.btn_search)
     public void buttonSearch(View view) {
         startActivity(SearchActivity.launchActivity(MainActivity.this,sku,mScanObject));
@@ -167,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
         String path = magicalCamera.savePhotoInMemoryDevice(magicalCamera.getPhoto(), "myPhotoName", "myDirectoryName", MagicalCamera.JPEG, true);
 
-        Log.d("PATH_IMAGE", path);
+//        Log.d("PATH_IMAGE", path);
 
         if (path != null) {
             countImage = countImage + 1;
