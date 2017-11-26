@@ -3,9 +3,12 @@ package vn.magik.atmsach.activity.searchActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,15 +18,21 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.squareup.picasso.Picasso;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import vn.magik.atmsach.R;
+import vn.magik.atmsach.activity.managerScanActivity.ManagerScanActivity;
 import vn.magik.atmsach.activity.resultSearchActivity.ResultSearchActivity;
 import vn.magik.atmsach.bean.AppConstants;
 import vn.magik.atmsach.model.BookTitle;
 import vn.magik.atmsach.model.ScanObject;
 import vn.magik.atmsach.realm.scanObject.ScanObjectRepository;
 import vn.magik.atmsach.util.BitmapTransform;
+import vn.magik.atmsach.util.CompareImage;
 import vn.magik.atmsach.util.Utils;
 
 public class SearchActivity extends AppCompatActivity implements ISearch.IView {
@@ -39,6 +48,8 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
     private String sku = "";
     private ScanObject scanObject = new ScanObject();
 
+    private boolean status = false;
+
     @BindView(R.id.image_search_book)
     ImageView imageBook;
     @BindView(R.id.text_search_name_book)
@@ -53,7 +64,43 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
     TextView textInfo;
     @BindView(R.id.linear_content)
     LinearLayout linearLayoutContent;
+    @BindView(R.id.text_search_status_damage)
+    TextView textViewStatus;
 
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
+                    Log.i("OPENCV", "OpenCV loaded successfully");
+
+//                    String a = "/storage/emulated/0/Pictures/myDirectoryName/myPhotoName_20171126065431.jpeg";
+//                    String b = "/storage/emulated/0/Pictures/myDirectoryName/myPhotoName_20171126065327.jpeg";
+//
+//                    Bitmap bitmapA = BitmapFactory.decodeFile(a);
+//                    Bitmap bitmapB = BitmapFactory.decodeFile(b);
+//
+//
+//                    int result = CompareImage.getInst(ManagerScanActivity.this).run(bitmapA, bitmapB);
+//                    Log.d("RESULT_", result +"");
+
+                    setStatus(true);
+                }
+                break;
+                default: {
+                    super.onManagerConnected(status);
+                }
+                break;
+            }
+        }
+    };
+
+
+    private void setStatus(boolean status) {
+        this.status = status;
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +162,13 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this,
+                mLoaderCallback);
+    }
+
+    @Override
     public void noticeError(int errorCode) {
         if (progressDialog != null) {
             progressDialog.dismiss();
@@ -127,6 +181,32 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
     }
 
     private void updateView(BookTitle bookTitle) {
+        String imageA = scanObject.getImageFront();
+        String imageB = bookTitle.getLogo();
+
+        if (this.status) {
+            int result = CompareImage.getInst(this).run(BitmapFactory.decodeFile(imageA), BitmapFactory.decodeFile(imageB));
+
+            switch (result) {
+                case 0:
+                    textViewStatus.setText("Độ mới: 100%");
+                    break;
+                case 1:
+                    textViewStatus.setText("Độ mới: 94%");
+                    break;
+
+                case 2:
+                    textViewStatus.setText("Độ mới: 50%");
+                    break;
+
+                case 3:
+                    textViewStatus.setText("Không xác định được");
+                    break;
+            }
+
+        }
+
+
         scanObject.setNameBook(bookTitle.getName());
         ScanObjectRepository.getIns().saveScanDraft(scanObject);
         int size = (int) Math.ceil(Math.sqrt(MAX_WIDTH * MAX_HEIGHT));
@@ -140,7 +220,7 @@ public class SearchActivity extends AppCompatActivity implements ISearch.IView {
         textNameBook.setText(bookTitle.getName().toString());
         textAuthorBook.setText(bookTitle.getAuthor().toString());
         textPriceBook.setText(Utils.formatPrice(bookTitle.getListPrice()));
-        textDescription.setText(bookTitle.getDescription());
+        textDescription.setText(Html.fromHtml(bookTitle.getDescription()));
         textInfo.setText((Html.fromHtml(bookTitle.getInfo())));
     }
 }

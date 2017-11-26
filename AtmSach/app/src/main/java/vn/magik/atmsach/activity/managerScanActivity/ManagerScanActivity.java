@@ -37,32 +37,7 @@ public class ManagerScanActivity extends AppCompatActivity implements IManagerSc
     @BindView(R.id.recycler_manager_scan)
     RecyclerView recyclerViewHistoryScan;
 
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS: {
-                    Log.i(TAG, "OpenCV loaded successfully");
 
-                    String a = "/storage/emulated/0/Pictures/myDirectoryName/myPhotoName_20171126065431.jpeg";
-                    String b = "/storage/emulated/0/Pictures/myDirectoryName/myPhotoName_20171126065327.jpeg";
-
-                    Bitmap bitmapA = BitmapFactory.decodeFile(a);
-                    Bitmap bitmapB = BitmapFactory.decodeFile(b);
-
-
-                    int result = CompareImage.getInst(ManagerScanActivity.this).run(bitmapA, bitmapB);
-                    Log.d("RESULT_", result +"");
-
-                }
-                break;
-                default: {
-                    super.onManagerConnected(status);
-                }
-                break;
-            }
-        }
-    };
 
 
     @Override
@@ -85,8 +60,7 @@ public class ManagerScanActivity extends AppCompatActivity implements IManagerSc
         initView();
         super.onResume();
 
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this,
-                mLoaderCallback);
+
     }
     public static Intent launchActivity(Context context) {
         Intent intent = new Intent(context, ManagerScanActivity.class);
